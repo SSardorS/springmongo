@@ -4,12 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uz.pixel.springmongo.OrderColumn;
 import uz.pixel.springmongo.document.Student;
 import uz.pixel.springmongo.dto.StudentDto;
 import uz.pixel.springmongo.dto.StudentFilter;
@@ -93,9 +95,31 @@ public class StudentController {
 
 
     @GetMapping("/mongo/template/{limit}/{pageNumber}")
-    public HttpEntity<?> getWithMongoTemplate(@PathVariable int limit, @PathVariable int pageNumber){
+    public HttpEntity<?> getWithMongoTemplateAllStudentPage(@PathVariable int limit, @PathVariable int pageNumber){
 
         Query query = new Query().with(PageRequest.of(pageNumber, limit));
+
+        List<Student> students = mongoTemplate.find(query, Student.class, "student");
+
+        return ResponseEntity.ok().body(students);
+
+    }
+
+    @GetMapping("/mongo/template/group/{id}")
+    public HttpEntity<?> getWithMongoTemplateByGroupId(@PathVariable String id){
+
+        Query query = new Query(Criteria.where("groupId").is(id));
+
+        List<Student> students = mongoTemplate.find(query, Student.class, "student");
+
+        return ResponseEntity.ok().body(students);
+
+    }
+
+    @GetMapping("/mongo/template/orderBy/{orderColumn}/{orderDirection}")
+    public HttpEntity<?> getWithMongoTemplateOrderBy(@PathVariable String orderColumn, @PathVariable String orderDirection){
+
+        Query query = new Query().with(Sort.by(Sort.Direction.fromString(orderDirection), OrderColumn.valueOf(orderColumn).getColumn()));
 
         List<Student> students = mongoTemplate.find(query, Student.class, "student");
 
