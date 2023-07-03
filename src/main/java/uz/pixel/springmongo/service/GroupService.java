@@ -12,6 +12,7 @@ import uz.pixel.springmongo.repository.GroupRepository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GroupService {
@@ -38,7 +39,29 @@ public class GroupService {
 
     public boolean deleted(String id) {
 
-        groupRepository.findById(id);
+        Optional<Group> byId = groupRepository.findById(id);
+
+        if (byId.isEmpty())
+            return false;
+
+        groupRepository.deleteById(byId.get().getId());
+        return true;
+
+    }
+
+    public boolean put(String id, GroupDto groupDto) {
+
+        Optional<Group> groupOptional = groupRepository.findById(id);
+
+        if (groupOptional.isEmpty())
+            return false;
+
+        Group group = groupOptional.get();
+
+        group.setName(groupDto.getName());
+
+        groupRepository.save(group);
+
         return true;
 
     }

@@ -30,9 +30,15 @@ public class GroupController {
         return ResponseEntity.ok().body(all);
     }
 
+    @PutMapping("/edit/{id}")
+    public HttpEntity<?> put(@RequestBody GroupDto groupDto, @PathVariable String id){
+        boolean edit = groupService.put(id,groupDto);
+        return ResponseEntity.ok().body(edit);
+    }
 
-    @GetMapping("/{id}")
-    public boolean delete(@PathVariable String id){
-        return groupService.deleted(id);
+    @PutMapping("/delete/{id}")
+    public HttpEntity<?> delete(@PathVariable String id){
+        boolean edit = groupService.deleted(id);
+        return ResponseEntity.ok().body(edit);
     }
 }
