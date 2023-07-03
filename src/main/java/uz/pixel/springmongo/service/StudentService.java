@@ -95,8 +95,7 @@ public class StudentService{
 
         int skip = limit - studentFilter.getLimit();
 
-        return studentRepository.getWithPageAndOrderBy(OrderColumn.valueOf(studentFilter.getColumnName()).getColumn(),
-                OrderDirection.valueOf(studentFilter.getDirection()).getDirection(), limit, skip);
+        return studentRepository.getWithPageAndOrderBy(OrderColumn.valueOf(studentFilter.getColumnName()).getColumn(),OrderDirection.valueOf(studentFilter.getDirection()).getDirection(), limit, skip);
 
     }
 }

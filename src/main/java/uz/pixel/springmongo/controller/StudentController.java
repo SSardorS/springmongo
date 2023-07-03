@@ -2,6 +2,11 @@ package uz.pixel.springmongo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -71,5 +76,33 @@ public class StudentController {
         return ResponseEntity.ok().body(edit);
 
     }
+
+    @Autowired
+    MongoTemplate mongoTemplate;
+
+    @GetMapping("/mongo/template/{gender}")
+    public HttpEntity<?> getWithMongoTemplate(@PathVariable String gender){
+
+        Query query = new Query(Criteria.where("gender").is(gender));
+
+        List<Student> students = mongoTemplate.find(query, Student.class, "student");
+
+        return ResponseEntity.ok().body(students);
+
+    }
+
+
+    @GetMapping("/mongo/template/{limit}/{pageNumber}")
+    public HttpEntity<?> getWithMongoTemplate(@PathVariable int limit, @PathVariable int pageNumber){
+
+        Query query = new Query().with(PageRequest.of(pageNumber, limit));
+
+        List<Student> students = mongoTemplate.find(query, Student.class, "student");
+
+        return ResponseEntity.ok().body(students);
+
+    }
+
+
 
 }
